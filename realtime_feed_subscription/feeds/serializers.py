@@ -27,4 +27,10 @@ class UserLoginSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['email','password']
+
+class SubscriptionSerializer(serializers.ModelSerializer):
+    gc_name = serializers.CharField(max_length = 100)
+    class Meta:
+        model = Subscription
+        fields = ['gc_name']
     
