@@ -39,3 +39,9 @@ class User(AbstractBaseUser):
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["full_name", "age"]
+
+
+class Subscription(models.Model):
+    gc_name = models.CharField(max_length=200)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
