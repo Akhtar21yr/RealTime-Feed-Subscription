@@ -20,6 +20,7 @@ class BinanceConsumer(AsyncJsonWebsocketConsumer):
                     })
                 else :
                     await self.send_json({'msg':f'Please first subscribe {self.group_name} group'})
+                    await self.close()
             except Exception as e :
                 await self.send_json({'error':str(e)})
                 await self.close()
