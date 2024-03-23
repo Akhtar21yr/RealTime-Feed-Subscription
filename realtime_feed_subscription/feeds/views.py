@@ -17,26 +17,32 @@ def get_token_for_user(user):
 
 class UserSignupView(APIView):
     def post(self, request):
-        serializer = UserSignupSerializer(data=request.data)
-        if not serializer.is_valid():
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        user = serializer.save()
-        token = get_token_for_user(user)
-        return Response({'msg': 'Register Successful', 'token': token}, status=status.HTTP_201_CREATED)
-    
+        try :
+            serializer = UserSignupSerializer(data=request.data)
+            if not serializer.is_valid(raise_exception=True):
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            user = serializer.save()
+            token = get_token_for_user(user)
+            return Response({'msg': 'Register Successful', 'token': token}, status=status.HTTP_201_CREATED)
+        except Exception as e :
+            return Response({'error':str(e)},status=400)
 class UserLoginView(APIView):
     def post(self, request):
-        serializer = UserLoginSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            email = serializer.data.get('email')
-            password = serializer.data.get('password')
-            user = authenticate(email=email, password=password)
-            if user is not None:
-                user.last_login = timezone.now().astimezone(timezone.get_current_timezone())
-                user.save()
-                token = get_token_for_user(user)
-                return Response({ "msg": "Login Successful","token": token}, status=status.HTTP_200_OK)
-            return Response({"errors": {"validation_errors": ['password and email is not valid']}}, status=status.HTTP_404_NOT_FOUND)
+        try :
+            serializer = UserLoginSerializer(data=request.data)
+            if serializer.is_valid(raise_exception=True):
+                email = serializer.data.get('email')
+                password = serializer.data.get('password')
+                user = authenticate(email=email, password=password)
+                if user is not None:
+                    user.last_login = timezone.now().astimezone(timezone.get_current_timezone())
+                    user.save()
+                    token = get_token_for_user(user)
+                    return Response({ "msg": "Login Successful","token": token}, status=status.HTTP_200_OK)
+                return Response({"errors": {"validation_errors": ['password and email is not valid']}}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e :
+            return Response({'error':str(e)},status=400)
+            
         
 class SubscriptionView(APIView):
     permission_classes = [IsAuthenticated]
