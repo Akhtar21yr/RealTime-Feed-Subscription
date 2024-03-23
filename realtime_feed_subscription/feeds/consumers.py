@@ -17,12 +17,12 @@ class BinanceConsumer(AsyncJsonWebsocketConsumer):
                     await self.channel_layer.group_add(self.group_name,self.channel_name)
                     await self.channel_layer.group_send(self.group_name,{
                         'type' : 'send.data'
-                    }
-                    )
+                    })
                 else :
                     await self.send_json({'msg':f'Please first subscribe {self.group_name} group'})
             except Exception as e :
                 await self.send_json({'error':str(e)})
+                await self.close()
         else :
             await self.send_json({'msg' : "Login credential not provided"})
             await self.close()
@@ -41,7 +41,7 @@ class BinanceConsumer(AsyncJsonWebsocketConsumer):
     async def receive_json(self, content, **kwargs):
         msg = content.get('message')
         if msg :
-            self.send_json({'receive_msg': msg})
+            self.send_json({'received_msg': msg})
 
     async def disconnect(self, code):
         StopConsumer()
