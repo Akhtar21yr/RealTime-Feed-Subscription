@@ -1,6 +1,8 @@
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from channels.exceptions import StopConsumer
 import websockets
+from .models import Subscription
+from channels.db import database_sync_to_async
 
 class BinanceConsumer(AsyncJsonWebsocketConsumer):
 
@@ -8,13 +10,18 @@ class BinanceConsumer(AsyncJsonWebsocketConsumer):
         await self.accept()
         self.group_name = 'binance'
         user = self.scope['user']
-        if not user.is_authenticated :
+        if  user.is_authenticated :
             try :
-                await self.channel_layer.group_add(self.group_name,self.channel_name)
-                await self.channel_layer.group_send(self.group_name,{
-                    'type' : 'send.data'
-                }
-                )
+                query = await  database_sync_to_async(Subscription.objects.filter)(gc_name = self.group_name,user=user)
+                is_subscribe = await query.exists() 
+                if is_subscribe :
+                    await self.channel_layer.group_add(self.group_name,self.channel_name)
+                    await self.channel_layer.group_send(self.group_name,{
+                        'type' : 'send.data'
+                    }
+                    )
+                else :
+                    await self.send_json({'msg':f'Please first subscribe {self.group_name} group'})
             except Exception as e :
                 await self.send_json({'error':str(e)})
         else :
