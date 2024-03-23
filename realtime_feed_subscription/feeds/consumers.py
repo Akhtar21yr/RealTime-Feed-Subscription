@@ -12,8 +12,7 @@ class BinanceConsumer(AsyncJsonWebsocketConsumer):
         user = self.scope['user']
         if  user.is_authenticated :
             try :
-                query = await  database_sync_to_async(Subscription.objects.filter)(gc_name = self.group_name,user=user)
-                is_subscribe = await query.exists() 
+                is_subscribe = await self.get_user_subscription(user)
                 if is_subscribe :
                     await self.channel_layer.group_add(self.group_name,self.channel_name)
                     await self.channel_layer.group_send(self.group_name,{
@@ -46,3 +45,7 @@ class BinanceConsumer(AsyncJsonWebsocketConsumer):
 
     async def disconnect(self, code):
         StopConsumer()
+
+    @database_sync_to_async
+    def get_user_subscription(self, user):
+        return Subscription.objects.filter(gc_name=self.group_name, user=user).exists()
