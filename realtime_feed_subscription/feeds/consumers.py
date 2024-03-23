@@ -1,5 +1,6 @@
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from channels.exceptions import StopConsumer
+import websockets
 
 class BinanceConsumer(AsyncJsonWebsocketConsumer):
 
@@ -13,7 +14,11 @@ class BinanceConsumer(AsyncJsonWebsocketConsumer):
         )
 
     async def send_data(self,event):
-        await self.send_json({'msg':'msg from group'})
+        async with websockets.connect(
+            "wss://dstream.binance.com/stream?streams=btcusd_perp@bookTicker"
+        ) as ws:
+            async for data in ws:
+                await self.send_json({"data": data})
 
     async def receive_json(self, content, **kwargs):
         msg = content.get('message')
