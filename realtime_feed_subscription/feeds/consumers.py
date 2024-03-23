@@ -24,7 +24,7 @@ class BinanceConsumer(AsyncJsonWebsocketConsumer):
                 await self.send_json({'error':str(e)})
                 await self.close()
         else :
-            await self.send_json({'msg' : self.scope['error']})
+            await self.send_json({'msg' : "Login credential not provided"})
             await self.close()
 
     async def send_data(self,event):
@@ -44,7 +44,7 @@ class BinanceConsumer(AsyncJsonWebsocketConsumer):
             self.send_json({'received_msg': msg})
 
     async def disconnect(self, code):
-        raise StopConsumer()
+        StopConsumer()
 
     @database_sync_to_async
     def get_user_subscription(self, user):
