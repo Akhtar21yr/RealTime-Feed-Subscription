@@ -23,6 +23,7 @@ This repository contains a Django application for building a real-time feed subs
 
    ```bash
    git clone https://github.com/Akhtar21yr/RealTime-Feed-Subscription
+   cd realtime_feed_subscription
    ```
 2. Install the required dependencies:
 
@@ -112,6 +113,8 @@ This repository contains a Django application for building a real-time feed subs
 - Make sure you have already subscribed `binance` group.
 
 - Connect to the websocket and enjoy real-time feed data from binance.
+
+
 
 
 
