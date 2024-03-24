@@ -78,8 +78,8 @@ This repository contains a Django application for building a real-time feed subs
     - Add email, password in Body/raw as a  json data to login in system.
     ```bash
     {
-    "email":"sahil2@gmail.com",
-    "password":"1234"
+    "email":"admin@gmail.com",
+    "password":"admin"
     }
     ```
     - If everything is ok then is provide access and refresh token, copy the access token for further use.
